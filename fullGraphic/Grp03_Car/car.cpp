@@ -1,11 +1,7 @@
+#include "car.h"
 #include <GL/glut.h>
 #include <GL/glu.h>
 #include <cmath>
-
-// Global variables for car movement
-float carX = 0.0f;
-float carZ = 0.0f;
-float carAngle = 0.0f;
 
 //draw a single wheel
 void drawWheel(float radius, float width) {
@@ -39,7 +35,7 @@ void carBody(){
     */
 
     glPushMatrix();
-    glColor3f(0.3f, 0.0f, 0.0f); //dark red body
+    glColor3f(0.7f, 0.0f, 0.0f); //dark red body
     glTranslatef(0.0f, -0.2f, 0.0f);
 
     //dimensions
@@ -105,7 +101,7 @@ void carCabin(){
     //glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.8f, 0.8f, 0.8f);
+    glColor3f(0.9f, 0.8f, 0.4f);
     glTranslatef(0.25f, 0.1f, 0.0f); // position on top of car body
 
     float cabinLengthTop = 0.4f;
@@ -210,8 +206,11 @@ void carWheels(){
 void drawCar() {
     glPushMatrix();
 
-    glTranslatef(carX, 0.0f, carZ);
+    glTranslatef(carX, 0.6f, carZ);
     glRotatef(carAngle, 0.0f, 1.0f, 0.0f);
+
+
+    glScalef(3.0f, 3.0f, 3.0f); //scale car
 
     carBody();
     carCabin();
@@ -219,108 +218,4 @@ void drawCar() {
     carWheels();
 
     glPopMatrix();
-}
-
-//car movement with arrow keys
-void specialKeys(int key, int x, int y) {
-    float moveSpeed = 0.2f;
-    float rotateSpeed = 5.0f;
-
-    switch (key) {
-        case GLUT_KEY_DOWN:
-            carX += moveSpeed * cos(carAngle * M_PI / 180.0f);
-            carZ -= moveSpeed * sin(carAngle * M_PI / 180.0f);
-            break;
-        case GLUT_KEY_UP:
-            carX -= moveSpeed * cos(carAngle * M_PI / 180.0f);
-            carZ += moveSpeed * sin(carAngle * M_PI / 180.0f);
-            break;
-        case GLUT_KEY_LEFT:
-            carAngle += rotateSpeed;
-            break;
-        case GLUT_KEY_RIGHT:
-            carAngle -= rotateSpeed;
-            break;
-        case GLUT_KEY_PAGE_UP: ////move away from scrn for test
-            carZ -= moveSpeed;
-            break;
-        case GLUT_KEY_PAGE_DOWN: //move toward scrn for test
-            carZ += moveSpeed;
-            break;
-    }
-
-    glutPostRedisplay();
-}
-
-// resizing window
-void reshape(int w, int h) {
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0, (double)w / h, 0.1, 100.0);
-    glMatrixMode(GL_MODELVIEW);
-}
-
-// redrawing window
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
-    gluLookAt(0.0, 1.5, 6.0,
-              0.0, 0.0, 0.0,
-              0.0, 1.0, 0.0);
-
-    // drawing road
-    /*glColor3f(0.3f, 0.3f, 0.3f);
-    glBegin(GL_QUADS);
-        glNormal3f(0, 1, 0);
-        glVertex3f(-10.0f, -0.5f, -10.0f);
-        glVertex3f(-10.0f, -0.5f,  10.0f);
-        glVertex3f( 10.0f, -0.5f,  10.0f);
-        glVertex3f( 10.0f, -0.5f, -10.0f);
-    glEnd();
-    */
-
-    drawCar();
-    glutSwapBuffers();
-}
-
-//lighting and shadows
-void init() {
-    glEnable(GL_DEPTH_TEST);
-    //glShadeModel(GL_SMOOTH); //shading
-    glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
-
-    // Disable lighting for flat colors
-    // glEnable(GL_LIGHTING);
-    // glEnable(GL_LIGHT0);
-
-    //light position
-    // GLfloat lightPos[] = {2, 5, 3, 1};
-    // glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-
-    //ambient light
-    // GLfloat ambient[] = {0.5, 0.5, 0.5, 1};
-    // glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-
-    //color tracking
-    // glEnable(GL_COLOR_MATERIAL);
-    // glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-}
-
-//main
-int main(int argc, char** argv) {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
-    glutCreateWindow("Race car");
-
-    init();
-
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutSpecialFunc(specialKeys); //enables arrow keys
-
-    glutMainLoop();
-    return 0;
 }

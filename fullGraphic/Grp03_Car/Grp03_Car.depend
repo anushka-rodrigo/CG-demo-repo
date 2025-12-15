@@ -1,0 +1,67 @@
+# depslib dependency file v1.0
+1765736749 source:d:\4th semester\computer graphics\prac\grp03_car\main.cpp
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+	"Car.h"
+	"Environment.h"
+
+1426329928 c:\program files\codeblocks\mingw\include\gl\glut.h
+	"freeglut_std.h"
+
+1426329928 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
+1765722767 d:\4th semester\computer graphics\prac\grp03_car\car.h
+	<GL/glut.h>
+	<GL/glu.h>
+
+1765722824 d:\4th semester\computer graphics\prac\grp03_car\environment.h
+	<GL/glut.h>
+
+1765732940 source:d:\4th semester\computer graphics\prac\grp03_car\car.cpp
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+	"Car.h"
+
+1765737599 source:d:\4th semester\computer graphics\prac\grp03_car\environment.cpp
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+	"environment.h"
+
+1765799990 source:c:\users\user\downloads\grp03_car\car.cpp
+	"car.h"
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+
+1765722768 c:\users\user\downloads\grp03_car\car.h
+	<GL/glut.h>
+	<GL/glu.h>
+
+1765800259 source:c:\users\user\downloads\grp03_car\environment.cpp
+	"environment.h"
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+
+1765722826 c:\users\user\downloads\grp03_car\environment.h
+	<GL/glut.h>
+
+1765799521 source:c:\users\user\downloads\grp03_car\main.cpp
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+	"Car.h"
+	"Environment.h"
+
