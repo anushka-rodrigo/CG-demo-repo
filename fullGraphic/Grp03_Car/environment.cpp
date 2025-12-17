@@ -121,7 +121,8 @@ void drawTree(float x, float z) {
 // Draw Environment (Road & Grass)
 void drawEnvironment() {
     // 1. Draw Grass
-    glColor3f(0.2f, 0.6f, 0.2f);
+    //glColor3f(0.2f, 0.6f, 0.2f); //originally given color
+    glColor3f(0.3f, 0.7f, 0.3f);
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0);
         glVertex3f(-100.0f, -0.55f, -100.0f);
