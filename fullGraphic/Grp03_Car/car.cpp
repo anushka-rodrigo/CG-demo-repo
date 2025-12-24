@@ -5,7 +5,9 @@
 
 //draw a single wheel
 void drawWheel(float radius, float width) {
-    glColor3f(0.0f, 0.0f, 0.0f); // black color wheel
+
+    //wheels without rims
+    /*glColor3f(0.0f, 0.0f, 0.0f); // black color wheel
 
     GLUquadric* quad = gluNewQuadric(); // create a quadric object
 
@@ -17,6 +19,60 @@ void drawWheel(float radius, float width) {
     gluDisk(quad, 0.0, radius, 30, 1);       // one end
     glTranslatef(0.0f, 0.0f, width);         // move to the other end
     gluDisk(quad, 0.0, radius, 30, 1);       // other end
+
+    glPopMatrix();
+    gluDeleteQuadric(quad);
+    */
+
+    //wheels with rims
+    GLUquadric* quad = gluNewQuadric();
+
+    glPushMatrix();
+
+    // Rotate so wheel faces outward
+    glRotatef(90, 0, 0, 1);
+
+    // =========================
+    // 1. TIRE (outer black)
+    // =========================
+    glColor3f(0.05f, 0.05f, 0.05f); // tire rubber
+    gluCylinder(quad, radius, radius, width, 32, 1);
+
+    // Tire sides
+    gluDisk(quad, radius * 0.85f, radius, 32, 1);
+    glTranslatef(0, 0, width);
+    gluDisk(quad, radius * 0.85f, radius, 32, 1);
+
+    // =========================
+    // 2. RIM BASE (metal disc)
+    // =========================
+    glTranslatef(0, 0, -width * 0.5f);
+    glColor3f(0.75f, 0.75f, 0.75f); // silver rim
+    gluDisk(quad, 0.0, radius * 0.75f, 32, 1);
+
+    // =========================
+    // 3. CENTER HUB
+    // =========================
+    glColor3f(0.4f, 0.4f, 0.4f);
+    gluDisk(quad, 0.0, radius * 0.2f, 20, 1);
+
+    // =========================
+    // 4. SPOKES (5 spokes)
+    // =========================
+    glColor3f(0.6f, 0.6f, 0.6f);
+
+    int spokes = 5;
+    float spokeLength = radius * 0.7f;
+    float spokeWidth  = 0.04f;
+
+    for (int i = 0; i < spokes; i++) {
+        glPushMatrix();
+        glRotatef(i * (360.0f / spokes), 0, 0, 1);
+        glTranslatef(spokeLength / 2, 0, 0);
+        glScalef(spokeLength, spokeWidth, spokeWidth);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+    }
 
     glPopMatrix();
     gluDeleteQuadric(quad);
@@ -172,6 +228,33 @@ void carSpoiler(){
     glPopMatrix();
 }
 
+void carRearLights() {
+
+    // Decide light color
+    if (carSpeed < 0.0f) {
+        // Reverse light → white
+        glColor3f(1.0f, 1.0f, 1.0f);
+    } else {
+        // Normal tail light → red
+        glColor3f(0.8f, 0.0f, 0.0f);
+    }
+
+    // Left rear light
+    glPushMatrix();
+    glTranslatef(1.0f, -0.05f, 0.25f); // rear-left
+    glScalef(0.08f, 0.05f, 0.12f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Right rear light
+    glPushMatrix();
+    glTranslatef(1.0f, -0.05f, -0.25f); // rear-right
+    glScalef(0.08f, 0.05f, 0.12f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+}
+
+
 //car wheels
 void carWheels(){
     float radius = 0.17f;
@@ -180,24 +263,30 @@ void carWheels(){
     //back wheel left side
     glPushMatrix();
     glTranslatef(0.65f, -0.2f, 0.3f); //wheel position
+    glRotatef(wheelRotation, 0, 0, 1);
     drawWheel(radius, width);
     glPopMatrix();
 
     //back wheel right side
     glPushMatrix();
     glTranslatef(0.65f, -0.2f, -0.4f);
+    glRotatef(wheelRotation, 0, 0, 1);
     drawWheel(radius, width);
     glPopMatrix();
 
     //front wheel left side
     glPushMatrix();
     glTranslatef(-0.40f, -0.2f, 0.3f);
+    glRotatef(wheelSteerAngle, 0, 1, 0); //turn wheel
+    glRotatef(wheelRotation, 0, 0, 1); //rotate wheel with movement
     drawWheel(radius, width);
     glPopMatrix();
 
     //front wheel right side
     glPushMatrix();
     glTranslatef(-0.40f, -0.2f, -0.4f);
+    glRotatef(wheelSteerAngle, 0, 1, 0); //turn wheel
+    glRotatef(wheelRotation, 0, 0, 1); //rotate wheel with movement
     drawWheel(radius, width);
     glPopMatrix();
 }
@@ -215,6 +304,7 @@ void drawCar() {
     carBody();
     carCabin();
     carSpoiler();
+    carRearLights();
     carWheels();
 
     glPopMatrix();

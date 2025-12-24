@@ -16,6 +16,10 @@
 float carX = 20.0f;
 float carZ = -15.0f;
 float carAngle = 0.0f;
+float carSpeed = 0.0f; //forward, backward speech
+float wheelRotation = 0.0f; //for wheels to rotate
+float wheelSteerAngle = 0.0f; //variable to turn the wheels
+
 
 // ----------------------------------------------------
 // CORE CALLBACK FUNCTIONS
@@ -24,8 +28,9 @@ float carAngle = 0.0f;
 // Car movement with arrow keys (from car.cpp)
 void specialKeys(int key, int x, int y) {
     float moveSpeed = 0.5f;
-    float rotateSpeed = 5.0f;
+    //float rotateSpeed = 5.0f;
 
+    /* this is correct implementation before turning
     switch (key) {
         case GLUT_KEY_DOWN:
             carX += moveSpeed * cos(carAngle * M_PI / 180.0f);
@@ -48,9 +53,86 @@ void specialKeys(int key, int x, int y) {
             carZ += moveSpeed;
             break;
     }
+    */
+    float accel = 0.045f;
+    float steering = 2.0f;
+
+    switch (key) {
+        case GLUT_KEY_UP:
+            if (carSpeed < 0.0f){
+                carSpeed += accel * 2.5f;  // braking while reversing
+            }
+            else{
+                carSpeed += accel;
+            }
+            break;
+
+        case GLUT_KEY_DOWN:
+            if (carSpeed > 0.0f){
+                carSpeed -= accel * 2.5f;  // braking while moving forward
+            }
+            else{
+                carSpeed -= accel;
+            }
+            break;
+
+        case GLUT_KEY_LEFT:
+            if (carSpeed >= 0.0f){
+                carAngle += steering; //forward
+            }
+            else{
+                carAngle -= steering; //backward steering
+            }
+            wheelSteerAngle = 25.0f;   // steer left
+            break;
+
+        case GLUT_KEY_RIGHT:
+            if (carSpeed >= 0.0f){
+                carAngle -= steering; //forward
+            }
+            else{
+                carAngle += steering; //backward steering
+            }
+            wheelSteerAngle = -25.0f;   // steer right
+            break;
+
+        case GLUT_KEY_PAGE_UP:
+            carZ -= moveSpeed;
+            break;
+
+        case GLUT_KEY_PAGE_DOWN:
+            carZ += moveSpeed;
+            break;
+    }
+
+    // Auto-center steering
+    if (key != GLUT_KEY_LEFT && key != GLUT_KEY_RIGHT) {
+        wheelSteerAngle *= 0.85f; // smooth return
+    }
 
     glutPostRedisplay();
 }
+
+//arc motion for car
+void updateCar() {
+    float rad = carAngle * M_PI / 180.0f;
+
+    // move forward in the direction the car is facing
+    carX -= carSpeed * cos(rad);
+    carZ += carSpeed * sin(rad);
+
+    // Rotate wheels based on speed
+    wheelRotation += carSpeed * 50.0f; // multiplier controls spin speed
+
+    // natural slowing down
+    carSpeed *= 0.95f;
+
+    // speed limits (IMPORTANT)
+    if (carSpeed > 0.5f)  carSpeed = 0.45f;   // max forward speed
+    if (carSpeed < -0.3f) carSpeed = -0.25f;  // max reverse speed
+}
+
+
 
 // Reshaping window (from both files)
 void reshape(int w, int h) {
@@ -79,6 +161,7 @@ void init() {
 
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
 }
 
 // Redrawing window (The main drawing loop)
@@ -86,12 +169,14 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
+    updateCar(); //added to car turning functionality
+
     // Camera setup
     gluLookAt(
         -5.0f, 25.0f, 15.0f,   // eye
         -5.0f, 0.0f, -25.0f,    // center
         0.0f, 1.0f, 0.0f    // up
-);
+    );
 
     // Call drawing functions from other modules
     drawEnvironment(); // Defined in Environment.cpp

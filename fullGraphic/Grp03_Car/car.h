@@ -9,6 +9,9 @@
 extern float carX;
 extern float carZ;
 extern float carAngle;
+extern float wheelRotation;
+extern float wheelSteerAngle;
+extern float carSpeed;
 
 // Function declarations for car geometry
 void drawWheel(float radius, float width);
