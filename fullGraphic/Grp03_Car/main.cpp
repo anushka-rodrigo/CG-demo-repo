@@ -1,4 +1,4 @@
-
+#include <iostream>
 #include <GL/glut.h>
 #include <GL/glu.h>
 #include <cmath>
@@ -187,6 +187,15 @@ void display() {
 
 // Main function (from both files)
 int main(int argc, char** argv) {
+    // Print instructions to console
+    std::cout << "********** 3D Car Simulation Controls **********\n\n";
+    std::cout << "Arrow Up    : Accelerate / Move Forward\n";
+    std::cout << "Arrow Down  : Brake / Reverse\n";
+    std::cout << "Arrow Left  : Turn Left\n";
+    std::cout << "Arrow Right : Turn Right\n\n";
+    std::cout << "**********************************************\n\n";
+
+    //initializing GLUT
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
