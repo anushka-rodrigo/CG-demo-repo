@@ -284,11 +284,16 @@ void display() {
 int main(int argc, char** argv) {
     // Print instructions to console
     std::cout << "********** 3D Car Simulation Controls **********\n\n";
-    std::cout << "Arrow Up    : Accelerate / Move Forward\n";
-    std::cout << "Arrow Down  : Brake / Reverse\n";
-    std::cout << "Arrow Left  : Turn Left\n";
-    std::cout << "Arrow Right : Turn Right\n";
-    std::cout << "D           : Toggle Day / Night\n\n";
+    std::cout << "Car behaviour -\n";
+    std::cout << "Arrow Up   : Accelerate / Move Forward\n";
+    std::cout << "Arrow Down : Brake / Reverse\n";
+    std::cout << "Arrow Left : Turn Left\n";
+    std::cout << "Arrow Right: Turn Right\n\n\n";
+
+    std::cout << "Environment behaviour -\n";
+    std::cout << "D : Toggle Day / Night\n";
+    std::cout << "] : Zoom in\n";
+    std::cout << "[ : Zoom out\n\n";
     std::cout << "**********************************************\n\n";
 
     //initializing GLUT
