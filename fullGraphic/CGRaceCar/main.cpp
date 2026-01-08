@@ -21,6 +21,7 @@ float wheelRotation = 0.0f; //for wheels to rotate
 float wheelSteerAngle = 0.0f; //variable to turn the wheels
 
 bool isDay = true;
+float zoom = 60.0f; //this is the default FOV (45 to 60)
 
 
 // ----------------------------------------------------
@@ -89,11 +90,33 @@ void specialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+//declared function so it can be used in keyboard func
+void reshape(int w, int h);
+
 void keyboard(unsigned char key, int x, int y) {
     if (key == 'd' || key == 'D') {
         isDay = !isDay;
         glutPostRedisplay();
     }
+    switch(key){
+        case ']':
+            if (zoom > 5.0f){
+                zoom -= 2.0f;
+            }
+            break;
+        case '[':
+            if (zoom < 120.0f){
+                zoom += 2.0f;
+            }
+            break;
+    }
+
+    // We must manually call the reshape logic to apply the new 'zoom' to gluPerspective
+    int width = glutGet(GLUT_WINDOW_WIDTH);
+    int height = glutGet(GLUT_WINDOW_HEIGHT);
+    reshape(width, height);
+
+    glutPostRedisplay();
 }
 
 
@@ -141,7 +164,7 @@ void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (double)w / h, 0.1, 500.0);
+    gluPerspective(zoom, (float)w / h, 0.1, 500.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -239,6 +262,9 @@ void display() {
     glLoadIdentity();
 
     updateCar(); //added to car turning functionality
+    //adding car functionality here ensures proper circular angled turning
+    //if you implement this function any where else it won't implement the circular turning motion
+    //instead it will just rotate in same place
 
     // Camera setup
     gluLookAt(

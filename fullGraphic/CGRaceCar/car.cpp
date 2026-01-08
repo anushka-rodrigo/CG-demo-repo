@@ -146,6 +146,34 @@ void carBody(){
     glPopMatrix();
 }
 
+//car headlights
+void carHeadlights(){
+    // Light color: Bright white-yellow
+    glColor3f(1.0f, 1.0f, 0.8f);
+
+    float bodyFrontX = -0.85f;        // frontX from your carBody (lengthBottom / 2)
+    float headlightSize = 0.07f;
+    float headlightY = -0.1f;       // Adjusted slightly higher to sit on the front face
+    float headlightZOffset = 0.22f; // Distance from center to left/right
+
+    // Left Headlight
+    glPushMatrix();
+    // Position it at frontX, slightly offset (+0.01) to prevent flickering
+    glTranslatef(bodyFrontX + 0.01f, headlightY, headlightZOffset);
+    glRotatef(-40.0f, 0.0f, 0.0f, 1.0f);
+    glScalef(0.02f, headlightSize, headlightSize * 1.5f); // Thin but wide
+    glutSolidCube(1.0f);
+    glPopMatrix(); // Corrected from popMatrix()
+
+    // Right Headlight
+    glPushMatrix();
+    glTranslatef(bodyFrontX + 0.01f, headlightY, -headlightZOffset);
+    glRotatef(-40.0f, 0.0f, 0.0f, 1.0f);
+    glScalef(0.02f, headlightSize, headlightSize * 1.5f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+}
+
 //car cabin trapezoidal
 void carCabin(){
     //Car Cabin (rectangle)
@@ -157,7 +185,15 @@ void carCabin(){
     //glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.9f, 0.8f, 0.4f);
+
+    if (isDay){
+        glColor3f(0.9f, 0.8f, 0.4f);
+    }
+    else{
+        glDisable(GL_LIGHTING);
+        glColor3f(0.9f, 0.8f, 0.4f);
+    }
+
     glTranslatef(0.25f, 0.1f, 0.0f); // position on top of car body
 
     float cabinLengthTop = 0.4f;
@@ -206,6 +242,10 @@ void carCabin(){
 
     glEnd();
     glPopMatrix();
+
+    if (!isDay) {
+        glEnable(GL_LIGHTING); // CRITICAL: Turn lighting back on for the rest of the car
+    }
 }
 
 //car spoiler
@@ -295,13 +335,14 @@ void carWheels(){
 void drawCar() {
     glPushMatrix();
 
-    glTranslatef(carX, 0.6f, carZ);
+    glTranslatef(carX, 1.0f, carZ);
     glRotatef(carAngle, 0.0f, 1.0f, 0.0f);
 
 
-    glScalef(3.0f, 3.0f, 3.0f); //scale car
+    glScalef(4.0f, 4.0f, 4.0f); //scale car
 
     carBody();
+    carHeadlights();
     carCabin();
     carSpoiler();
     carRearLights();

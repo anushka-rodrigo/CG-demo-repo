@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1767262329 source:c:\users\user\downloads\cg assignment\cgracecar\car.cpp
+1767870520 source:c:\users\user\downloads\cg assignment\cgracecar\car.cpp
 	"car.h"
 	<GL/glut.h>
 	<GL/glu.h>
 	<cmath>
 
-1767262385 c:\users\user\downloads\cg assignment\cgracecar\car.h
+1767869776 c:\users\user\downloads\cg assignment\cgracecar\car.h
 	<GL/glut.h>
 	<GL/glu.h>
 
