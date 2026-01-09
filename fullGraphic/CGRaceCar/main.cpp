@@ -23,15 +23,33 @@ float wheelSteerAngle = 0.0f; //variable to turn the wheels
 bool isDay = true;
 float zoom = 60.0f; //this is the default FOV (45 to 60)
 
+//Person collision state data
+const int PERSON_COUNT = 5;
+const int POLICE_COUNT = 2;
 
-// ----------------------------------------------------
-// CORE CALLBACK FUNCTIONS
-// ----------------------------------------------------
+float personX[PERSON_COUNT] = {-15.0f, 0.0f, -5.0f, -20.0f, -45.0f};
+float personZ[PERSON_COUNT] = {-22.0f, -22.0f, -7.0f, -7.0f, -50.0f};
+float personColor[PERSON_COUNT] = {0.5f, 0.7f, 0.3f, 0.9f, 0.0f};
+
+float policeX[PERSON_COUNT] = {20.0f, -25.0f};
+float policeZ[PERSON_COUNT] = {-22.0f, -70.0f};
+
+bool personVisible[PERSON_COUNT] = {true, true, true, true, true,};
+bool policeVisible[PERSON_COUNT] = {true, true};
+
+
+
+bool hitPerson(float carX, float carZ, float px, float pz, float radius)
+{
+    float dx = carX - px;
+    float dz = carZ - pz;
+    return (dx * dx + dz * dz) <= (radius * radius);
+}
 
 // Car movement with arrow keys (from car.cpp)
 void specialKeys(int key, int x, int y) {
     float moveSpeed = 0.5f;
-    float accel = 0.045f;
+    float accel = 0.1f;
     float steering = 2.0f;
 
     switch (key) {
@@ -90,10 +108,17 @@ void specialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
-//declared function so it can be used in keyboard func
+//declared function so it can be used in keyboard function
 void reshape(int w, int h);
+void resetPeople();
+
 
 void keyboard(unsigned char key, int x, int y) {
+    if (key == 'r' || key == 'R') {
+        resetPeople();
+        glutPostRedisplay();
+        return;
+    }
     if (key == 'd' || key == 'D') {
         isDay = !isDay;
         glutPostRedisplay();
@@ -119,7 +144,6 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-
 //arc motion for car
 void updateCar() {
     float rad = carAngle * M_PI / 180.0f;
@@ -128,19 +152,50 @@ void updateCar() {
     carX -= carSpeed * cos(rad);
     carZ += carSpeed * sin(rad);
 
+    //person collision detection
+    float hitRadius = 2.0f; // car + person size
+
+    for (int i=0; i<PERSON_COUNT; i++){
+        if (personVisible[i] && hitPerson(carX, carZ, personX[i], personZ[i], hitRadius)){
+            personVisible[i] = false; //bye bye signore
+        }
+    }
+    for (int j=0; j<POLICE_COUNT; j++){
+        if (policeVisible[j] && hitPerson(carX, carZ, policeX[j], policeZ[j], hitRadius)){
+            policeVisible[j] = false; //bye bye signore
+        }
+    }
+
     // Rotate wheels based on speed
     wheelRotation += carSpeed * 50.0f; // multiplier controls spin speed
 
-    // natural slowing down
-    carSpeed *= 0.95f;
+    // natural slowing down (friction)
+    carSpeed *= 0.98f;
 
     // speed limits (IMPORTANT)
-    if (carSpeed > 0.5f)  {
-        carSpeed = 0.45f;   // max forward speed
+    if (carSpeed > 0.7f)  {
+        carSpeed = 0.65f;   // max forward speed
     }
-    if (carSpeed < -0.3f) {
-        carSpeed = -0.25f;  // max reverse speed
+    if (carSpeed < -0.4f) {
+        carSpeed = -0.35f;  // max reverse speed
     }
+}
+
+//bring back the people to life
+void resetPeople()
+{
+    for (int i = 0; i < PERSON_COUNT; i++) {
+        personVisible[i] = true;
+    }for (int j = 0; j < POLICE_COUNT; j++) {
+        policeVisible[j] = true;
+    }
+    // Reset car to original starting position
+    carX = 20.0f;       // original X
+    carZ = -15.0f;      // original Z
+    carAngle = 0.0f;    // facing forward
+    carSpeed = 0.0f;    // stopped
+    wheelRotation = 0.0f;
+    wheelSteerAngle = 0.0f;
 }
 
 // Lighting and setup (from environment.cpp init)
@@ -174,7 +229,7 @@ void setupLighting() {
     glEnable(GL_LIGHT0);
 
     if (isDay) {
-        //DAY LIGHTING
+        //Light options for Day
         GLfloat lightPos[] = {0.0f, 80.0f, 0.0f, 1.0f};
         GLfloat ambient[]  = {0.75f, 0.75f, 0.75f, 1.0f};
         GLfloat diffuse[]  = {1.0f,  1.0f,  1.0f,  1.0f};
@@ -188,7 +243,7 @@ void setupLighting() {
         glClearColor(0.65f, 0.85f, 0.95f, 1.0f); // sky blue
     }
     else {
-        //NIGHT LIGHTING
+        //Light options for Night
         GLfloat lightPos[] = {0.0f, 40.0f, 20.0f, 1.0f};
         GLfloat ambient[]  = {0.15f, 0.15f, 0.25f, 1.0f};
         GLfloat diffuse[]  = {0.4f,  0.4f,  0.6f,  1.0f};
@@ -274,8 +329,8 @@ void display() {
     );
 
     // Call drawing functions from other modules
-    drawEnvironment(); // Defined in Environment.cpp
-    drawCar();         // Defined in Car.cpp
+    drawEnvironment();
+    drawCar();
 
     glutSwapBuffers();
 }
@@ -292,6 +347,7 @@ int main(int argc, char** argv) {
 
     std::cout << "Environment behaviour -\n";
     std::cout << "D : Toggle Day / Night\n";
+    std::cout << "R : Reset environment\n";
     std::cout << "] : Zoom in\n";
     std::cout << "[ : Zoom out\n\n";
     std::cout << "**********************************************\n\n";

@@ -167,11 +167,18 @@ static void drawStreetLamp(float x, float z) {
     glPopMatrix();
 
     // Light Bulb (Glowing)
+    if (!isDay){
+        glDisable(GL_LIGHTING);
+    }
     glColor3f(1.0f, 1.0f, 0.7f);
     glPushMatrix();
     glTranslatef(-2.0f, 7.5f, 0.0f);
     glutSolidSphere(0.3f, 8, 8);
     glPopMatrix();
+
+    if (!isDay){
+        glEnable(GL_LIGHTING);
+    }
 
     glPopMatrix();
 }
@@ -340,6 +347,14 @@ static void drawPoliceman(float x, float z) {
     glutSolidSphere(0.25f, 12, 12);
     glPopMatrix();
 
+    // Police Utility Belt
+    glColor3f(0.0f, 0.0f, 0.0f); // Black belt
+    glPushMatrix();
+    glTranslatef(0.0f, 0.65f, 0.0f); // Position at waist
+    glScalef(0.55f, 0.1f, 0.35f);    // Slightly wider than the body
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
     // Cap
     glColor3f(0.05f, 0.05f, 0.3f);
     glPushMatrix();
@@ -352,10 +367,100 @@ static void drawPoliceman(float x, float z) {
     glPopMatrix();
 }
 
+static void drawPerson(float x, float z, float tcolor){
+    glPushMatrix();
+
+    glTranslatef(x, 0.0f, z);
+    glScalef(1.5f, 1.5f, 1.5f);
+
+    // Shoes (Black)
+    glColor3f(0.1f, 0.1f, 0.1f);
+
+    glPushMatrix();
+    glTranslatef(-0.15f, 0.0f, 0.05f);
+    glScalef(0.2f, 0.1f, 0.35f);
+    glutSolidCube(1.0f); // Left Shoe
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.15f, 0.0f, 0.05f);
+    glScalef(0.2f, 0.1f, 0.35f);
+    glutSolidCube(1.0f); // Right Shoe
+    glPopMatrix();
+
+    // Legs
+    glColor3f(0.05f, 0.05f, 0.3f);
+
+    glPushMatrix();
+    glTranslatef(-0.15f, 0.3f, 0.0f);
+    glScalef(0.15f, 0.6f, 0.25f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.15f, 0.3f, 0.0f);
+    glScalef(0.15f, 0.6f, 0.25f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Body
+    glColor3f(0.5f, tcolor, 0.2f);
+    glPushMatrix();
+    glTranslatef(0.0f, 0.9f, 0.0f);
+    glScalef(0.5f, 0.6f, 0.3f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Arms
+    glColor3f(0.5f, tcolor, 0.2f);
+
+    glPushMatrix();
+    glTranslatef(-0.33f, 0.9f, 0.0f);
+    glScalef(0.12f, 0.55f, 0.2f);
+    glutSolidCube(1.0f); // Left Arm
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.33f, 0.9f, 0.0f);
+    glScalef(0.12f, 0.55f, 0.2f);
+    glutSolidCube(1.0f); // Right Arm
+    glPopMatrix();
+
+    // Hands
+    glColor3f(0.9f, 0.75f, 0.6f);
+
+    glPushMatrix();
+    glTranslatef(-0.33f, 0.6f, 0.0f);
+    glutSolidSphere(0.1f, 10, 10); // Left Hand
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.33f, 0.6f, 0.0f);
+    glutSolidSphere(0.1f, 10, 10); // Right Hand
+    glPopMatrix();
+
+    // Head
+    glColor3f(0.9f, 0.75f, 0.6f);
+    glPushMatrix();
+    glTranslatef(0.0f, 1.35f, 0.0f);
+    glutSolidSphere(0.25f, 12, 12);
+    glPopMatrix();
+
+    // Cap
+    glColor3f(0.1f, 0.1f, 0.1f);
+    glPushMatrix();
+    glTranslatef(0.0f, 1.55f, 0.0f);
+    glRotatef(90, 1, 0, 0);
+    glutSolidTorus(0.05f, 0.25f, 12, 12);
+    glutSolidSphere(0.25f, 12, 12);
+    glPopMatrix();
+
+    glPopMatrix();
+}
 
 // Main Environment Drawing Function
-
 void drawEnvironment() {
+
     // --- 1. Ground (Grass) ---
     glColor3f(0.3f, 0.45f, 0.25f);
     glBegin(GL_QUADS);
@@ -457,7 +562,29 @@ void drawEnvironment() {
     drawStreetLamp(-23.0f, -45.0f);
     drawStreetLamp(-23.0f, -80.0f);
 
-    drawPoliceman(20.0f, -22.0f);
+    if (isDay){
+        // make people only appear during day time as he is off-duty at night
+
+        /* the actual X and Z locations of the people
+        drawPoliceman(20.0f, -22.0f);
+        drawPerson(-15.0f, -22.0f, 0.5f);
+        drawPerson(0.0f, -22.0f, 0.7f);
+        drawPerson(-5.0f, -7.0f, 0.3f);
+        drawPerson(-20.0f, -7.0f, 0.9f);
+        drawPerson(-45.0f, -50.0f, 0.0f);
+        drawPoliceman(-25.0f, -70.0f);*/
+
+        for (int i=0; i<PERSON_COUNT; i++){
+            if (personVisible[i]){
+                drawPerson(personX[i], personZ[i], personColor[i]);
+            }
+        }
+        for (int j=0; j<PERSON_COUNT; j++){
+            if (policeVisible[j]){
+                drawPoliceman(policeX[j], policeZ[j]);
+            }
+        }
+    }
 
     // Houses
     for (float x = -30; x < 30; x += 20) {

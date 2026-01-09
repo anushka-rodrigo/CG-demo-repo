@@ -6,24 +6,6 @@
 //draw a single wheel
 void drawWheel(float radius, float width) {
 
-    //wheels without rims
-    /*glColor3f(0.0f, 0.0f, 0.0f); // black color wheel
-
-    GLUquadric* quad = gluNewQuadric(); // create a quadric object
-
-    glPushMatrix();
-    glRotatef(90, 0, 0, 1); // rotate to align cylinder along X-axis
-    gluCylinder(quad, radius, radius, width, 30, 1); // base radius, top radius, height, slices, stacks
-
-    // Draw the two wheel caps
-    gluDisk(quad, 0.0, radius, 30, 1);       // one end
-    glTranslatef(0.0f, 0.0f, width);         // move to the other end
-    gluDisk(quad, 0.0, radius, 30, 1);       // other end
-
-    glPopMatrix();
-    gluDeleteQuadric(quad);
-    */
-
     //wheels with rims
     GLUquadric* quad = gluNewQuadric();
 
@@ -32,9 +14,7 @@ void drawWheel(float radius, float width) {
     // Rotate so wheel faces outward
     glRotatef(90, 0, 0, 1);
 
-    // =========================
     // 1. TIRE (outer black)
-    // =========================
     glColor3f(0.05f, 0.05f, 0.05f); // tire rubber
     gluCylinder(quad, radius, radius, width, 32, 1);
 
@@ -43,22 +23,16 @@ void drawWheel(float radius, float width) {
     glTranslatef(0, 0, width);
     gluDisk(quad, radius * 0.85f, radius, 32, 1);
 
-    // =========================
     // 2. RIM BASE (metal disc)
-    // =========================
     glTranslatef(0, 0, -width * 0.5f);
     glColor3f(0.75f, 0.75f, 0.75f); // silver rim
     gluDisk(quad, 0.0, radius * 0.75f, 32, 1);
 
-    // =========================
     // 3. CENTER HUB
-    // =========================
     glColor3f(0.4f, 0.4f, 0.4f);
     gluDisk(quad, 0.0, radius * 0.2f, 20, 1);
 
-    // =========================
     // 4. SPOKES (5 spokes)
-    // =========================
     glColor3f(0.6f, 0.6f, 0.6f);
 
     int spokes = 5;
@@ -80,15 +54,6 @@ void drawWheel(float radius, float width) {
 
 //car body
 void carBody(){
-    //rectangle shape
-    /*
-    glPushMatrix();
-    glColor3f(0.3f, 0.0f, 0.0f);
-    //glscalef is the size of obj, x,y,z
-    glScalef(2.0f, 0.5f, 0.5f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
-    */
 
     glPushMatrix();
     glColor3f(0.7f, 0.0f, 0.0f); //dark red body
@@ -176,23 +141,14 @@ void carHeadlights(){
 
 //car cabin trapezoidal
 void carCabin(){
-    //Car Cabin (rectangle)
-    //glPushMatrix();
-    //glColor3f(0.8f, 0.8f, 0.8f);
-    //glTranslatef(0.1f, 0.35f, 0.0f);
-    //glScalef(0.8f, 0.3f, 0.4f);
-    //glutSolidCube(1.0f);
-    //glPopMatrix();
 
     glPushMatrix();
 
-    if (isDay){
-        glColor3f(0.9f, 0.8f, 0.4f);
-    }
-    else{
+    if (!isDay){
         glDisable(GL_LIGHTING);
-        glColor3f(0.9f, 0.8f, 0.4f);
     }
+
+    glColor3f(0.9f, 0.8f, 0.4f);
 
     glTranslatef(0.25f, 0.1f, 0.0f); // position on top of car body
 
