@@ -4,8 +4,9 @@
 #include <cmath>
 
 // Include our custom modules
-#include "Car.h"
-#include "Environment.h"
+#include "car.h"
+#include "environment.h"
+#include "crashedCar.h"
 
 // Define M_PI if necessary
 #ifndef M_PI
@@ -21,6 +22,7 @@ float wheelRotation = 0.0f; //for wheels to rotate
 float wheelSteerAngle = 0.0f; //variable to turn the wheels
 
 bool isDay = true;
+bool isCrashed = false;
 float zoom = 60.0f; //this is the default FOV (45 to 60)
 
 //Person collision state data
@@ -37,7 +39,44 @@ float policeZ[PERSON_COUNT] = {-22.0f, -70.0f};
 bool personVisible[PERSON_COUNT] = {true, true, true, true, true,};
 bool policeVisible[PERSON_COUNT] = {true, true};
 
+//obj collisions
+struct Obstacle {
+    float x;
+    float z;
+    float radius;
+};
 
+Obstacle treeObstacles[] = {
+    { 5.0f,  -35.0f, 2.5f },
+    { 25.0f, -45.0f, 2.5f },
+    { -10.0f, -55.0f, 3.0f },
+    { 15.0f, -65.0f, 3.0f },
+    { 45.0f, -2.0f,  3.0f },
+    { 75.0f, -2.0f,  3.0f },
+    { -45.0f, -105.0f, 3.0f }
+};
+const int TREE_COUNT = sizeof(treeObstacles) / sizeof(Obstacle);
+
+Obstacle houseObstacles[] = {
+    { -30.0f, -2.0f, 3.5f },
+    { -10.0f, -2.0f, 3.5f },
+    {  10.0f, -2.0f, 3.5f }
+};
+const int HOUSE_COUNT = sizeof(houseObstacles) / sizeof(Obstacle);
+
+Obstacle buildingObstacles[] = {
+    { -50.0f, -35.0f, 5.0f },
+    { -50.0f, -60.0f, 5.0f },
+    { -50.0f, -85.0f, 5.0f },
+    {  60.0f, -40.0f, 5.0f }
+};
+const int BUILDING_COUNT = sizeof(buildingObstacles) / sizeof(Obstacle);
+
+bool hitObstacle(float cx, float cz, Obstacle o) {
+    float dx = cx - o.x;
+    float dz = cz - o.z;
+    return (dx * dx + dz * dz) <= (o.radius * o.radius);
+}
 
 bool hitPerson(float carX, float carZ, float px, float pz, float radius)
 {
@@ -52,6 +91,9 @@ void specialKeys(int key, int x, int y) {
     float accel = 0.1f;
     float steering = 2.0f;
 
+    if (isCrashed){
+        return;
+    }
     switch (key) {
         case GLUT_KEY_UP:
             if (carSpeed < 0.0f){
@@ -91,11 +133,11 @@ void specialKeys(int key, int x, int y) {
             wheelSteerAngle = -25.0f;   // steer right
             break;
 
-        case GLUT_KEY_PAGE_UP:
+        case GLUT_KEY_PAGE_UP: //for testing purposes - to move car in and out of scrn in z axis
             carZ -= moveSpeed;
             break;
 
-        case GLUT_KEY_PAGE_DOWN:
+        case GLUT_KEY_PAGE_DOWN: //for testing purposes - to move car in and out of scrn in z axis
             carZ += moveSpeed;
             break;
     }
@@ -119,17 +161,42 @@ void keyboard(unsigned char key, int x, int y) {
         glutPostRedisplay();
         return;
     }
+
     if (key == 'd' || key == 'D') {
         isDay = !isDay;
         glutPostRedisplay();
     }
+
+    //for testing purposes - change to crashed state
+    if (key == 'c' || key == 'C') {
+        isCrashed = !isCrashed;
+        if (isCrashed){
+            //sop all movements
+            carSpeed=0.0f;
+            wheelRotation=0.0f;
+            wheelSteerAngle=0.0f;
+        }
+        glutPostRedisplay();
+        return;
+    }
+
     switch(key){
-        case ']':
+        case 'w':
             if (zoom > 5.0f){
                 zoom -= 2.0f;
             }
             break;
-        case '[':
+        case 'W':
+            if (zoom > 5.0f){
+                zoom -= 2.0f;
+            }
+            break;
+        case 's':
+            if (zoom < 120.0f){
+                zoom += 2.0f;
+            }
+            break;
+        case 'S':
             if (zoom < 120.0f){
                 zoom += 2.0f;
             }
@@ -148,6 +215,10 @@ void keyboard(unsigned char key, int x, int y) {
 void updateCar() {
     float rad = carAngle * M_PI / 180.0f;
 
+    if (isCrashed){
+        return;
+    }
+
     // move forward in the direction the car is facing
     carX -= carSpeed * cos(rad);
     carZ += carSpeed * sin(rad);
@@ -163,6 +234,33 @@ void updateCar() {
     for (int j=0; j<POLICE_COUNT; j++){
         if (policeVisible[j] && hitPerson(carX, carZ, policeX[j], policeZ[j], hitRadius)){
             policeVisible[j] = false; //bye bye signore
+        }
+    }
+
+    //obj collision check
+    float carRadius = 1.5f;
+
+    for (int i = 0; i < TREE_COUNT; i++) {
+        if (hitObstacle(carX, carZ, treeObstacles[i])) {
+            isCrashed = true;
+            carSpeed = 0.0f;
+            return;
+        }
+    }
+
+    for (int i = 0; i < HOUSE_COUNT; i++) {
+        if (hitObstacle(carX, carZ, houseObstacles[i])) {
+            isCrashed = true;
+            carSpeed = 0.0f;
+            return;
+        }
+    }
+
+    for (int i = 0; i < BUILDING_COUNT; i++) {
+        if (hitObstacle(carX, carZ, buildingObstacles[i])) {
+            isCrashed = true;
+            carSpeed = 0.0f;
+            return;
         }
     }
 
@@ -189,6 +287,7 @@ void resetPeople()
     }for (int j = 0; j < POLICE_COUNT; j++) {
         policeVisible[j] = true;
     }
+    isCrashed = false;
     // Reset car to original starting position
     carX = 20.0f;       // original X
     carZ = -15.0f;      // original Z
@@ -330,7 +429,12 @@ void display() {
 
     // Call drawing functions from other modules
     drawEnvironment();
-    drawCar();
+    if (!isCrashed){
+        drawCar();
+    }
+    else{
+        drawCrashedCar();
+    }
 
     glutSwapBuffers();
 }
@@ -348,8 +452,8 @@ int main(int argc, char** argv) {
     std::cout << "Environment behaviour -\n";
     std::cout << "D : Toggle Day / Night\n";
     std::cout << "R : Reset environment\n";
-    std::cout << "] : Zoom in\n";
-    std::cout << "[ : Zoom out\n\n";
+    std::cout << "W : Zoom in\n";
+    std::cout << "S : Zoom out\n\n";
     std::cout << "**********************************************\n\n";
 
     //initializing GLUT

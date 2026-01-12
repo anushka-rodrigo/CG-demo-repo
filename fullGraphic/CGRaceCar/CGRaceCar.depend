@@ -5,7 +5,7 @@
 	<GL/glu.h>
 	<cmath>
 
-1767869776 c:\users\user\downloads\cg assignment\cgracecar\car.h
+1768203880 c:\users\user\downloads\cg assignment\cgracecar\car.h
 	<GL/glut.h>
 	<GL/glu.h>
 
@@ -23,7 +23,7 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1767948571 source:c:\users\user\downloads\cg assignment\cgracecar\environment.cpp
+1767949149 source:c:\users\user\downloads\cg assignment\cgracecar\environment.cpp
 	"environment.h"
 	<GL/glut.h>
 	<cmath>
@@ -31,11 +31,22 @@
 1767948549 c:\users\user\downloads\cg assignment\cgracecar\environment.h
 	<GL/glut.h>
 
-1767948426 source:c:\users\user\downloads\cg assignment\cgracecar\main.cpp
+1768203958 source:c:\users\user\downloads\cg assignment\cgracecar\main.cpp
 	<iostream>
 	<GL/glut.h>
 	<GL/glu.h>
 	<cmath>
-	"Car.h"
-	"Environment.h"
+	"car.h"
+	"environment.h"
+	"crashedCar.h"
+
+1768203800 source:c:\users\user\downloads\cg assignment\cgracecar\crashedcar.cpp
+	"crashedCar.h"
+	<GL/glut.h>
+	<GL/glu.h>
+	<cmath>
+
+1768203914 c:\users\user\downloads\cg assignment\cgracecar\crashedcar.h
+	<GL/glut.h>
+	<GL/glu.h>
 

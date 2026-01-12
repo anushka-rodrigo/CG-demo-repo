@@ -41,6 +41,8 @@
 		</Linker>
 		<Unit filename="car.cpp" />
 		<Unit filename="car.h" />
+		<Unit filename="crashedCar.cpp" />
+		<Unit filename="crashedCar.h" />
 		<Unit filename="environment.cpp" />
 		<Unit filename="environment.h" />
 		<Unit filename="main.cpp" />

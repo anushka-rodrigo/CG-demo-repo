@@ -1,6 +1,6 @@
-// car.h
-#ifndef CAR_H
-#define CAR_H
+//crashedCar.h
+#ifndef CRASHEDCAR_H
+#define CRASHEDCAR_H
 
 #include <GL/glut.h>
 #include <GL/glu.h>
@@ -12,15 +12,18 @@ extern float carAngle;
 extern float wheelRotation;
 extern float wheelSteerAngle;
 extern float carSpeed;
-extern bool isDay;
+extern bool isCrashed;
 
 // Function declarations for car geometry
-void drawWheel(float radius, float width);
-void carBody();
-void carCabin();
-void carSpoiler();
-void carWheels();
-void drawCar();
+void drawCrashedWheel(float radius, float width);
+void crashedBody();
+void crashedCabin();
+void crashedSpoiler();
+void crashedWheels();
+void crashedLights();
+void drawCrashedCar();
 
 #endif // CAR_H
+
+
 
