@@ -18,7 +18,6 @@ extern bool isCrashed;
 void drawCrashedWheel(float radius, float width);
 void crashedBody();
 void crashedCabin();
-void crashedSpoiler();
 void crashedWheels();
 void crashedLights();
 void drawCrashedCar();
