@@ -17,7 +17,7 @@
 float carX = 20.0f;
 float carZ = -15.0f;
 float carAngle = 0.0f;
-float carSpeed = 0.0f; //forward, backward speech
+float carSpeed = 0.0f; //forward, backward speed
 float wheelRotation = 0.0f; //for wheels to rotate
 float wheelSteerAngle = 0.0f; //variable to turn the wheels
 
